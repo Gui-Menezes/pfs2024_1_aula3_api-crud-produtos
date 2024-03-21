@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-let produtos = [
+let listaProdutos = [
     {
         id: 1,
         nome: "Produto 1",
@@ -16,18 +16,21 @@ let produtos = [
 
 ];
 
+// daqui para baixo, tudo o que estiver no body será tratado como JSON:
+app.use(express.json())
+
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 
 app.get('/produtos', (req, res) => {
-  res.json(produtos)
+  res.json(listaProdutos)
 })
 
 // O operador + antes de uma string, transforma a string em um int.
 app.get('/produtos/:id', (req, res) => {
     const id = +req.params.id;
-    let produto = produtos.find((produto) => {
+    let produto = listaProdutos.find((produto) => {
         return produto.id === id;    
     })
 
@@ -37,6 +40,14 @@ app.get('/produtos/:id', (req, res) => {
     else{
         res.status(404).json({erro: "Produto não encontrado!"})
     }
+})
+
+app.post('/produtos', (req, res) => {
+    const produto = req.body;
+
+    listaProdutos.push(produto);
+
+    res.status(201).json(produto);
 })
 
 app.listen(port, () => {
